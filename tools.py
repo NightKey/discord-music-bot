@@ -33,6 +33,7 @@ class Downloader:
             print(f"\r{d['status']}{'.'*self.count}", end='')
     
     def move_file(self) -> None:
+        self.name.replace(".part", '')
         if not os.path.exists(self.name): self.name = '.'.join([*self.name.split('.')[:-1], "mp3"])
         os.replace(self.name, os.path.join(self.TARGET_FOLDER, self.name))
 
