@@ -1,4 +1,5 @@
 import youtube_dl, os
+from time import sleep
 
 class Downloader:
     count = 0
@@ -36,8 +37,16 @@ class Downloader:
         self.name.replace(".part", '')
         if not os.path.exists(self.name): self.name = '.'.join([*self.name.split('.')[:-1], "mp3"])
         os.replace(self.name, os.path.join(self.TARGET_FOLDER, self.name))
+    
+    def remove(self, name) -> None:
+        if "/" in name and "\\" in name:
+            raise ValueError("Only name allowed")
+        if not os.path.exists(name):
+            name = os.path.join(Downloader.TARGET_FOLDER, name)
+        os.remove(name)
 
     def download(self, url, cach=True) -> str:
+        while self.name != "": sleep(1)
         with youtube_dl.YoutubeDL(self.YDL_OPTS) as ydl:
             ydl.download([url])
         if cach: self.move_file()
