@@ -9,7 +9,7 @@ class Bot:
         self.api.validate()
         self.api.create_function("YTDownload", "Downloads a video from youtube\nUsage: &YTDownload <URL>\nCategory: NETWORK", self.send_back)
 
-    def download(self, url: str) -> list[str, str]:
+    def download(self, url: str) -> list:
         name = '.'.join(self.downloader.download(url).split('.')[:-1])
         abs_path = os.path.abspath(os.path.join(os.path.curdir, Downloader.TARGET_FOLDER, f"{name}.mp3"))
         return [name, abs_path]
