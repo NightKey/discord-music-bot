@@ -13,10 +13,10 @@ class Downloader:
         "progress_hooks": [],
     }
     VIDEO_OPTS = {
-        'format': 'bestaudio/best',
+        'format': 'best ',
         "progress_hooks": [],
     }
-    name = ""
+    name: str = ""
     TARGET_FOLDER = "downloads"
 
     def __init__(self, verbose: bool = True) -> None:
@@ -32,15 +32,18 @@ class Downloader:
     def progress_hook(self, d: dict) -> None:
         if not self.verbose: return
         if d["status"] == "finished":
-            print("\rDownload finished, converting...")
-        elif d["status"] == "downloading":
-            if self.count >= 3: self.count = 0
             if self.name == "": self.name = d["filename"]
-            print(f"\r{d['status']}{'.'*self.count}", end='')
+            print("\rDownload finished, converting...")
     
-    def move_file(self, video: bool) -> None:
-        self.name.replace(".part", '')
-        if not os.path.exists(self.name) and not video: self.name = '.'.join([*self.name.split('.')[:-1], "mp3"])
+    def search_actual_file(self) -> None:
+        self.name = ".".join(self.name.replace(".part", '').split('.')[:-1])
+        _, _, files = os.walk("./").__next__()
+        for item in files:
+            if self.name in item:
+                self.name = item
+                return
+
+    def move_file(self) -> None:
         os.replace(self.name, os.path.join(self.TARGET_FOLDER, self.name))
     
     def remove(self, name) -> None:
@@ -50,12 +53,15 @@ class Downloader:
             name = os.path.join(Downloader.TARGET_FOLDER, name)
         os.remove(name)
 
-    def download(self, url, cach=True, video: bool = False) -> str:
+    def download(self, url, cach: bool = True, video: bool = False) -> str:
         while self.name != "": sleep(1)
-        ytdl_opt = self.AUDIO_OPTS if not video else self.VIDEO_OPTS
-        with youtube_dl.YoutubeDL(ytdl_opt) as ydl:
-            ydl.download([url])
-        if cach: self.move_file(video)
-        name = self.name
-        self.name = ""
-        return name
+        ytdl_opts = self.AUDIO_OPTS if not video else self.VIDEO_OPTS
+        try:
+            with youtube_dl.YoutubeDL(ytdl_opts) as ydl:
+                ydl.download([url])
+            if not video: self.search_actual_file()
+            if cach: self.move_file()
+            name = self.name
+            self.name = ""
+            return name
+        except: return None
