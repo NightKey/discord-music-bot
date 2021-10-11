@@ -38,9 +38,22 @@ class Bot:
             self.downloader.remove(name)
         self.urls.remove(url)
 
+    def save(self, message: smdb_api.Message) -> None:
+        url = message.content.replace('audio', '').strip()
+        if url in self.urls: return
+        self.urls.append(url)
+        name, _ = self.download(url, True, "audio" not in message.content)
+        if name is None:
+            self.urls.remove(url)
+            self.api.send_message("Download failed", message.sender)
+            return
+        self.api.send_message("Download finished", message.sender)
+        self.urls.remove(url)
+
     def start(self) -> None:
         self.api.validate()
-        self.api.create_function("YTDownload", "Downloads an audio or video file from youtube\nUsage: &YTDownload [video] <URL>\nCategory: NETWORK", self.send_back)
+        self.api.create_function("YTDownload", "Downloads an audio or a video file from youtube\nUsage: &YTDownload [video] <URL>\nCategory: NETWORK", self.send_back)
+        self.api.create_function("YTSave", "Downloads and saves a video or an audio file from youtube\nUsage: &YTSave [audio] <URL>\nCategory: NETWORK", self.send_back)
 
     #TODO Play music in discord voice using the download function
 
