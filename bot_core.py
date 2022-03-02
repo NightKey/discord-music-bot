@@ -1,4 +1,4 @@
-from typing import Collection
+from typing import Tuple
 from tools import Downloader
 from logger import logger_class
 import smdb_api, os, updater
@@ -19,7 +19,7 @@ class Bot:
             self.api.close("update")
             self.send_command("restart")
 
-    def download(self, url: str, cach: bool, video: bool) -> Collection[str, str]:
+    def download(self, url: str, cach: bool, video: bool) -> Tuple[str, str]:
         self.logger.debug("Download started.")
         name = self.downloader.download(url, cach, video)
         if name is None: return [None, None]
