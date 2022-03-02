@@ -1,5 +1,6 @@
+from typing import Collection
 from tools import Downloader
-from time import sleep
+from logger import logger_class
 import smdb_api, os, updater
 
 class Bot:
@@ -8,6 +9,7 @@ class Bot:
         self.downloader = Downloader()
         self.urls = []
         self.api = smdb_api.API("YTDownloader", "1fc1323c684c0bb53628dda39514f659c0cbe2911aad525d416bb7ca8f8297bd", update_function=self.update)
+        self.logger = logger_class("DMB.log", level="DEBUG", log_to_console=True, use_file_names=False)
 
     def send_command(self, command):
         with open(command, "w") as f: pass
@@ -17,7 +19,8 @@ class Bot:
             self.api.close("update")
             self.send_command("restart")
 
-    def download(self, url: str, cach: bool, video: bool) -> list:
+    def download(self, url: str, cach: bool, video: bool) -> Collection[str, str]:
+        self.logger.debug("Download started.")
         name = self.downloader.download(url, cach, video)
         if name is None: return [None, None]
         abs_path = os.path.abspath(os.path.join(os.path.curdir, Downloader.TARGET_FOLDER if cach else "", name))
@@ -25,22 +28,31 @@ class Bot:
 
     def send_back(self, message: smdb_api.Message) -> None:
         url = message.content.replace('video', '').strip()
-        if url in self.urls: return
-        self.urls.append(url)
+        if url in self.urls: 
+            self.logger.warning("Same url detected")
+            self.api.send_message("This url was previously added to be downloaded!", message.sender)
+            return
+        self.urls.append(url)        
         name, abs_path = self.download(url, False, "video" in message.content)
         if name is None:
             self.urls.remove(url)
             return
         size_mb = (os.path.getsize(abs_path)/1024)/1024
-        print(f"The downloaded file size is {size_mb:.2f}MB.")
+        self.logger.info(f"The downloaded file size is {size_mb:.2f}MB.")
         if self.api.send_message("Download finished", message.sender, abs_path):
-            sleep(20)
-            self.downloader.remove(name)
+            self.delete_file(name, url)
+            
+    def delete_file(self, name, url):
+        self.logger.info(f"Removing the file '{name}'")
+        self.downloader.remove(name)
         self.urls.remove(url)
 
     def save(self, message: smdb_api.Message) -> None:
         url = message.content.replace('audio', '').strip()
-        if url in self.urls: return
+        if url in self.urls: 
+            self.logger.warning("Same url detected")
+            self.api.send_message("This url was previously added to be saved!", message.sender)
+            return
         self.urls.append(url)
         name, _ = self.download(url, True, "audio" not in message.content)
         if name is None:

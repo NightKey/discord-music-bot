@@ -3,7 +3,6 @@ from os import remove
 
 
 def main():
-    return False
     run('git pull > update.lg')
     with open('update.lg', 'r') as f:
         c = f.read(-1).split('\n')

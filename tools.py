@@ -1,5 +1,6 @@
 import youtube_dl, os
 from time import sleep
+from logger import logger_class
 
 class Downloader:
     count = 0
@@ -25,6 +26,7 @@ class Downloader:
         if not os.path.exists(self.TARGET_FOLDER):
             os.mkdir(self.TARGET_FOLDER)
         self.verbose = verbose
+        self.logger = logger_class("DMB_TOOLS.log", level="DEBUG", use_file_names=False)
 
     def set_name(self, name) -> None:
         self.name = name
@@ -34,6 +36,7 @@ class Downloader:
         if d["status"] == "finished":
             if self.name == "": self.name = d["filename"]
             print("\rDownload finished, converting...")
+            self.logger.info("Download finished")
     
     def search_actual_file(self) -> None:
         self.name = ".".join(self.name.replace(".part", '').split('.')[:-1])
