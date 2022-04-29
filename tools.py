@@ -1,3 +1,4 @@
+from typing import List, Union
 import youtube_dl, os
 from time import sleep
 from logger import logger_class
@@ -27,6 +28,18 @@ class Downloader:
             os.mkdir(self.TARGET_FOLDER)
         self.verbose = verbose
         self.logger = logger_class("DMB_TOOLS.log", level="DEBUG", use_file_names=False)
+        self.downloaded = self.read_downloaded()
+
+    def read_downloaded(self) -> List[str]:
+        return os.listdir(Downloader.TARGET_FOLDER)
+
+    def get_usable_id(self, url: str) -> str:
+        return url.split('/')[-1].split('watch?v=')[-1]
+
+    def find_file(self, url: str) -> Union[str, None]:
+        for file in self.downloaded:
+            if self.get_usable_id(url) in file: return file
+        return None
 
     def set_name(self, name) -> None:
         self.name = name
@@ -48,6 +61,7 @@ class Downloader:
 
     def move_file(self) -> None:
         os.replace(self.name, os.path.join(self.TARGET_FOLDER, self.name))
+        self.downloaded.append(self.name)
     
     def remove(self, name) -> None:
         if "/" in name and "\\" in name:
@@ -55,6 +69,15 @@ class Downloader:
         if not os.path.exists(name):
             name = os.path.join(Downloader.TARGET_FOLDER, name)
         os.remove(name)
+
+    def is_audio_formatum(self, file_name: str) -> bool: 
+        return file_name.split('.')[-1] == "mp3"
+
+    def is_downloaded(self, url: str, video: Union[bool, None] = None) -> bool:
+        for file in self.downloaded:
+            if self.get_usable_id(url) in file: 
+                if video is None or (video and not self.is_audio_formatum(file)) or (not video and self.is_audio_formatum(file)): return True
+        return False
 
     def download(self, url, cach: bool = True, video: bool = False) -> str:
         while self.name != "": sleep(1)
@@ -67,4 +90,6 @@ class Downloader:
             name = self.name
             self.name = ""
             return name
-        except: return None
+        except Exception as ex: 
+            print(ex)
+            return None
