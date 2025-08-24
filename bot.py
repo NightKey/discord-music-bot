@@ -6,13 +6,16 @@ interpreter = 'python' if system() == 'Windows' else 'python3'
 
 class Bot_runner:
 
+    def __init__(self, log_folder="logs"):
+        self.log_folder=log_folder
+
     def command_exists(self, name):
         if os.path.exists(name):
             os.remove(name)
             return True
         return False
 
-    def start(self):
+    def start(self, try_restart=True):
         self.server = subprocess.Popen([interpreter, "bot_core.py"])
         self.error = True
         while self.server.poll() is None:
@@ -25,8 +28,8 @@ class Bot_runner:
                 self.server.kill()
                 self.error = False
             sleep(1)
-        if self.error:
-            ansv = str(input("Du you want to restart the bot? ([Y]/N)") or "y")
+        if self.error and try_restart:
+            ansv = str(input("Do you want to restart the bot? ([Y]/N)") or "y")
             if ansv.lower() == "y":
                 self.start()
 
