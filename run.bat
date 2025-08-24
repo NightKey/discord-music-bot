@@ -24,6 +24,7 @@ IF "%VIRTUAL_ENV%"=="" (
     call venv/Scripts/activate.bat
 )
 
+call python -m pip install pip --upgrade
 call python -m pip install -r dependencies.txt --upgrade
 call cd src
 ECHO Starting
