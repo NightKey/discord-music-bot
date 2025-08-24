@@ -58,10 +58,6 @@ def main() -> None:
     bot.update()
     bot.start()
     atexit.register(bot.stop)
-    while (url := input("URL: ")) != "":
-        result_urls = bot.downloader.add_to_queue(url)
-        for result in bot.await_results(result_urls, url):
-            print(result)
 
 if  __name__ == "__main__":
     main()
