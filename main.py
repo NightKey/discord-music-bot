@@ -2,7 +2,7 @@ from typing import Union, List
 import atexit
 from tools import Downloader
 from smdb_logger import Logger, LEVEL
-import smdb_api, os, updater
+import smdb_api, os
 from time import sleep
 
 class Bot:
