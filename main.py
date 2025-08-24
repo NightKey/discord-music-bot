@@ -50,7 +50,6 @@ class Bot:
 
 def main() -> None:
     bot = Bot()
-    bot.update()
     bot.start()
     atexit.register(bot.stop)
 
