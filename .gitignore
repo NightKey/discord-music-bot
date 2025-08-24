@@ -2,3 +2,5 @@
 *downloads*
 *.vscode*
 *.log
+*.mp*
+*.cfg
