@@ -24,7 +24,7 @@ class Bot:
         url = message.content.strip()
         results = self.downloader.add_to_queue(url)
         for result in self.await_results(results, url):
-            self.api.send_message(result, message.sender, interface=message.interface)
+            self.api.send_message(result, interface=message.interface, destination=message.sender)
     
     def await_results(self, resulting_urls: Union[bool, List[str]], original_url: str) -> List[str]:
         if (resulting_urls == False or (isinstance(resulting_urls, list) and len(resulting_urls) == 0)): 
