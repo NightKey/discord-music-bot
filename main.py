@@ -53,6 +53,12 @@ def main() -> None:
     bot = Bot()
     bot.start()
     atexit.register(bot.stop)
+    print("Press CTRL+C to exit")
+    try:
+        while True:
+            sleep(.1)
+    except KeyboardInterrupt:
+        bot.stop()
 
 if  __name__ == "__main__":
     main()
