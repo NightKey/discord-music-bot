@@ -23,7 +23,7 @@ class Bot:
     def save(self, message: smdb_api.Message) -> None:
         url = message.content.strip()
         results = self.downloader.add_to_queue(url)
-        self.api.send_message(f"Added {'' if isinstance(result, bool) else len(result)} video(s) to the download queue", interface=message.interface, destination=message.sender)
+        self.api.send_message(f"Added {'' if isinstance(results, bool) else len(results)} video(s) to the download queue", interface=message.interface, destination=message.sender)
         for result in self.await_results(results, url):
             self.api.send_message(result, interface=message.interface, destination=message.sender)
     
