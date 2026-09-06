@@ -36,7 +36,7 @@ class Downloader:
         'retries': 3,
         'fragment_retries': 3,
         'noplaylist': False,
-        #'logger': FuckEasyNoLog()
+        'logger': FuckEasyNoLog()
     }
 
     def __init__(self, config: Dict[str, str]) -> None:
