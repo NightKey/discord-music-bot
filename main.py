@@ -7,7 +7,7 @@ from time import sleep
 
 class Bot:
     def __init__(self, log_folder="logs") -> None:
-        self.downloader = Downloader.from_cofnig(os.path.join(os.path.dirname(__file__), "config.cfg"))
+        self.downloader = Downloader.from_config(os.path.join(os.path.dirname(__file__), "config.cfg"))
         self.finished = {}
         self.api = smdb_api.API("YTDownloader", "1fc1323c684c0bb53628dda39514f659c0cbe2911aad525d416bb7ca8f8297bd")
         self.logger = Logger("DMB.log", log_folder=log_folder, level=LEVEL.DEBUG, use_file_names=False)

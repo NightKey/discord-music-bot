@@ -36,7 +36,7 @@ class Downloader:
         'retries': 3,
         'fragment_retries': 3,
         'noplaylist': False,
-        'logger': FuckEasyNoLog()
+        #'logger': FuckEasyNoLog()
     }
 
     def __init__(self, config: Dict[str, str]) -> None:
@@ -104,6 +104,6 @@ class Downloader:
                 self.finish_hook(url, False, f"{ex}")
     
     @staticmethod
-    def from_cofnig(path: str) -> "Downloader":
+    def from_config(path: str) -> "Downloader":
         with open(path, 'r') as f:
             return Downloader(json.load(f))
