@@ -20,7 +20,7 @@ class Downloader:
     download_thread: Optional[Thread] = None
     ydl_opts = {
         'format': "bestaudio/best",
-        'ignoreerrors': True,
+        'ignoreerrors': False,
         'no_warnings': False,
         'extract_flat': False,
         'writesubtitles': False,
@@ -100,7 +100,7 @@ class Downloader:
 
                     self.finish_hook(url, True, f"Downloaded video with title {info.get('title')}")
             except Exception as ex: 
-                self.logger.error(ex)
+                self.logger.error(f"Exception while downloading {info.get('title')}", exception=ex)
                 self.finish_hook(url, False, f"{ex}")
     
     @staticmethod
